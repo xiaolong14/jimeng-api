@@ -1,0 +1,77 @@
+{
+  "created": 1765981982,
+  "requests": [
+    {
+      "index": 1,
+      "status": 200,
+      "body": {
+        "created": 1765981972,
+        "data": [
+          {
+            "url": "https://p19-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/453a1bc6a4214e5e9f31b89cada224d2~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=KQXj7B0kgnSctN25wq5IavPRBkg%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/a3512ed668084df89c5379a596d3cb79~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=sw7pQ244pkwJEXUSXUyEjGAQJ2w%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/efe2a141bcb44bda892ca95cdcc56834~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=Pyk73o6pC5Pvecj63Bvb5aRLa%2BM%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/e10040d454b44f65996f613c5948638a~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=1IhAbAkx8TgMf9eLzRdnzNZNZ80%3D&format=.jpeg"
+          }
+        ],
+        "input_images": 1,
+        "composition_type": "multi_image_synthesis"
+      },
+      "retry_count": 1
+    },
+    {
+      "index": 2,
+      "status": 200,
+      "body": {
+        "created": 1765981982,
+        "data": [
+          {
+            "url": "https://p19-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/b106d762d3094f12972858ad4e87eb63~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=uL3NEVrNYSAC7fZzNKc27iaqu0k%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/c08128fa31e141678f98ae452402b487~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=9dJFEqOo9PC5BaneyHOgOGdtIkE%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/852d9cd7b5c44971b88b58ab7b36e8b0~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=M56ooWblvtKX2IbqdIVdpzotrtI%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/1fbc4892e5c84cd28228d3eccb6a62c0~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=xesvppcynlCFGrvASMznmdwABBU%3D&format=.jpeg"
+          }
+        ],
+        "input_images": 1,
+        "composition_type": "multi_image_synthesis"
+      },
+      "retry_count": 0
+    },
+    {
+      "index": 3,
+      "status": 200,
+      "body": {
+        "created": 1765981972,
+        "data": [
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/2d04b25097c44bf2969ac6dc21ba1a0b~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=NrTuxgv8OwSX1ha6emp%2FXdfoqAU%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/a5031b9128994122a573c76764d98251~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=zkLZOdNlq5r6idsICRiDQkSba8s%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p16-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/0d8d07e466e747aea8882b29e5f59e62~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=6VZSrAYNUoNgmYgYg49BHTUHmxQ%3D&format=.jpeg"
+          },
+          {
+            "url": "https://p19-dreamina-sign-sg.ibyteimg.com/tos-alisg-i-wopfjsm1ax-sg/0175dbb392a142108a4b182018428028~tplv-wopfjsm1ax-aigc_resize:0:0.jpeg?lk3s=43402efa&x-expires=1767744000&x-signature=XoUI%2Bbj3DW3%2FLZRcYx5lvgnRToA%3D&format=.jpeg"
+          }
+        ],
+        "input_images": 1,
+        "composition_type": "multi_image_synthesis"
+      },
+      "retry_count": 0
+    }
+  ]
+}

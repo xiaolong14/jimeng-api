@@ -1,0 +1,27 @@
+{
+  "test_start_time": 1765977198.594504,
+  "connection_test": {
+    "test_type": "connection_test",
+    "success": true,
+    "details": {
+      "tcp_connection_time": 0.0063326358795166016,
+      "host": "localhost",
+      "port": 5100
+    },
+    "error": null
+  },
+  "api_test": {
+    "index": 1,
+    "start_time": 1765975396.5603647,
+    "status": null,
+    "error": "请求超时(1802.03s): HTTPConnectionPool(host='localhost', port=5100): Read timed out. (read timeout=1800)",
+    "response_details": {},
+    "total_time": 1802.0341393947601
+  },
+  "summary": {
+    "total_time": 1802.0341393947601,
+    "success": false,
+    "error": "请求超时(1802.03s): HTTPConnectionPool(host='localhost', port=5100): Read timed out. (read timeout=1800)",
+    "status_code": null
+  }
+}
