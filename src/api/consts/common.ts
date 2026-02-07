@@ -27,7 +27,7 @@ export const REGION_SG = "SG";
 export const PLATFORM_CODE = "7";
 
 // 版本代码
-export const VERSION_CODE = "5.8.0";
+export const VERSION_CODE = "8.4.0";
 
 // 默认模型
 export const DEFAULT_IMAGE_MODEL = "jimeng-4.5";
@@ -35,7 +35,7 @@ export const DEFAULT_IMAGE_MODEL_US = "jimeng-4.5";
 export const DEFAULT_VIDEO_MODEL = "jimeng-video-3.5-pro";
 
 // 草稿版本
-export const DRAFT_VERSION = "3.3.7";
+export const DRAFT_VERSION = "3.3.8";
 export const DRAFT_MIN_VERSION = "3.0.2";
 
 // 图像模型映射

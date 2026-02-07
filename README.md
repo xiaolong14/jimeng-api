@@ -54,9 +54,11 @@ curl -X POST http://localhost:5100/v1/images/generations \
 > - **Japan site**: Add **jp-** prefix, e.g., `Bearer jp-your_session_id`
 > - **Singapore site**: Add **sg-** prefix, e.g., `Bearer sg-your_session_id`
 >
-> **Note 2**: The China site and international sites now support both *text-to-image* and *image-to-image*. The nanobanana and nanobananapro models are available on international sites.
+> **Note 2**: Supports binding proxies (HTTP/SOCKS5, etc.) in the Token, see [Token Bound Proxy Feature](#token-bound-proxy-feature-new) for details.
 >
-> **Note 3**: Resolution rules when using the nanobanana model on international sites:
+> **Note 3**: The China site and international sites now support both *text-to-image* and *image-to-image*. The nanobanana and nanobananapro models are available on international sites.
+>
+> **Note 4**: Resolution rules when using the nanobanana model on international sites:
 > - **US site (us-)**: Images are fixed at **1024x1024** with **2k** resolution, ignoring user-provided ratio and resolution parameters
 > - **Hong Kong/Japan/Singapore sites (hk-/jp-/sg-)**: Fixed **1k** resolution, but supports custom `ratio` values (e.g., 16:9, 4:3, etc.)
 
@@ -471,19 +473,50 @@ curl -X POST http://localhost:5100/v1/videos/generations \
 
 ```
 
-### Chat Completions
+### Token API
 
-**POST** `/v1/chat/completions`
+#### Token Bound Proxy Feature (New)
 
-```bash
-curl -X POST http://localhost:5100/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer YOUR_SESSION_ID" \
-  -d \
-    "{\"model\": \"jimeng-4.5\", \"messages\": [ { \"role\": \"user\", \"content\": \"Draw a landscape painting\" } ]}"
+**Description**: Users can embed a proxy URL in the token to solve issues where IP restrictions lead to 0 credit points during check-in. Each account can be bound to an independent proxy.
+
+**Token Format**:
+```
+[ProxyURL@][RegionPrefix-]session_id
+
+The proxy prefix is at the outermost layer, and the region prefix follows the session_id.
 ```
 
-### Token API
+**Supported Proxy Protocols**:
+- HTTP Proxy: `http://host:port`
+- HTTPS Proxy: `https://host:port`
+- SOCKS4 Proxy: `socks4://host:port`
+- SOCKS5 Proxy: `socks5://host:port`
+- Authenticated Proxy: `http://user:pass@host:port`
+
+**Full Examples**:
+| Scenario | Token Format |
+|------|-----------|
+| China site, no proxy | `session_id_xxx` |
+| US site, no proxy | `us-session_id_xxx` |
+| HK site, no proxy | `hk-session_id_xxx` |
+| China site + SOCKS5 Proxy | `socks5://127.0.0.1:1080@session_id_xxx` |
+| US site + HTTP Proxy | `http://127.0.0.1:7890@us-session_id_xxx` |
+| HK site + Auth Proxy | `http://user:pass@proxy.com:8080@hk-session_id_xxx` |
+
+**API Call Examples**:
+```bash
+# Single token with proxy
+curl -X POST http://localhost:5100/v1/images/generations \
+  -H "Authorization: Bearer socks5://127.0.0.1:1080@us-session_id" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "a cat", "model": "jimeng-3.0"}'
+
+# Multiple tokens, some with proxy
+curl -X POST http://localhost:5100/token/receive \
+  -H "Authorization: Bearer socks5://1.2.3.4:1080@us-token1,http://5.6.7.8:8080@hk-token2,token3"
+```
+
+**Backward Compatibility**: The token format without a proxy is fully compatible and requires no changes.
 
 #### Check Token Status
 
@@ -494,6 +527,13 @@ Check if a token is valid and active.
 **Request Parameters**:
 - `token` (string): The session token to check
 
+**Response Format**:
+```json
+{
+  "live": true
+}
+```
+
 #### Get Credit Points
 
 **POST** `/token/points`
@@ -502,6 +542,21 @@ Get the current credit balance for one or more tokens.
 
 **Request Headers**:
 - `Authorization`: Bearer token(s), multiple tokens separated by commas
+
+**Response Format**:
+```json
+[
+  {
+    "token": "your_token",
+    "points": {
+      "giftCredit": 10,
+      "purchaseCredit": 0,
+      "vipCredit": 0,
+      "totalCredit": 10
+    }
+  }
+]
+```
 
 #### Receive Daily Credits
 
@@ -522,10 +577,18 @@ Manually trigger daily credit collection (check-in). Attempts to claim credits a
       "purchaseCredit": 0,
       "vipCredit": 0,
       "totalCredit": 10
-    }
+    },
+    "received": true,
+    "error": "optional error message"
   }
 ]
 ```
+
+**Response Fields**:
+- `token` (string): The token that was processed
+- `credits` (object): Current credit balance after operation
+- `received` (boolean): Whether credits were successfully claimed (`true` if claimed, `false` if already had credits or claim failed)
+- `error` (string, optional): Error message if claim failed
 
 **Usage Example**:
 ```bash
@@ -555,71 +618,61 @@ curl -X POST http://localhost:5100/token/receive \
 }
 ```
 
-### Chat Completion Response
-```json
-{
-  "id": "chatcmpl-123",
-  "object": "chat.completion",
-  "created": 1759058768,
-  "model": "jimeng-4.5",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "![image](https://example.com/generated-image.jpg)"
-      },
-      "finish_reason": "stop"
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 10,
-    "completion_tokens": 20,
-    "total_tokens": 30
-  }
-}
-```
-
-### Stream Response (SSE)
-```
-data: {"id":"chatcmpl-123","object":"chat.completion.chunk","created":1759058768,"model":"jimeng-4.5","choices":[{"index":0,"delta":{"role":"assistant","content":"🎨 Generating image, please wait..."},"finish_reason":null}]}
-
-data: {"id":"chatcmpl-123","object":"chat.completion.chunk","created":1759058768,"model":"jimeng-4.5","choices":[{"index":1,"delta":{"role":"assistant","content":"![image](https://example.com/image.jpg)"},"finish_reason":"stop"}]}
-
-data: [DONE]
-```
-
 ## 🏗️ Project Architecture
 
 ```
 jimeng-api/
 ├── src/
 │   ├── api/
+│   │   ├── builders/             # Request builders
+│   │   │   └── payload-builder.ts  # API request payload builder
 │   │   ├── controllers/          # Controller layer
-│   │   │   ├── core.ts          # Core functions (network requests, file handling)
-│   │   │   ├── images.ts        # Image generation logic
-│   │   │   ├── videos.ts        # Video generation logic
-│   │   │   └── chat.ts          # Chat interface logic
-│   │   ├── routes/              # Route definitions
-│   │   └── consts/              # Constant definitions
-│   ├── lib/                     # Core library
-│   │   ├── configs/            # Configuration loading
-│   │   ├── consts/             # Constants
-│   │   ├── exceptions/         # Exception classes
-│   │   ├── interfaces/         # Interface definitions
-│   │   ├── request/            # Request handling
-│   │   ├── response/           # Response handling
-│   │   ├── config.ts           # Configuration center
-│   │   ├── server.ts           # Server core
-│   │   ├── logger.ts           # Logger
-│   │   ├── error-handler.ts    # Unified error handling
-│   │   ├── smart-poller.ts     # Smart poller
-│   │   └── aws-signature.ts    # AWS signature
-│   ├── daemon.ts               # Daemon process
-│   └── index.ts               # Entry file
-├── configs/                    # Configuration files
-├── Dockerfile                 # Docker configuration
-└── package.json              # Project configuration
+│   │   │   ├── core.ts           # Core functions (network requests, file handling)
+│   │   │   ├── images.ts         # Image generation logic
+│   │   │   └── videos.ts         # Video generation logic
+│   │   ├── routes/               # Route definitions
+│   │   │   ├── index.ts          # Route entry
+│   │   │   ├── images.ts         # Image generation routes
+│   │   │   ├── videos.ts         # Video generation routes
+│   │   │   ├── token.ts          # Token management routes
+│   │   │   ├── models.ts         # Model list routes
+│   │   │   └── ping.ts           # Health check routes
+│   │   └── consts/               # Constant definitions
+│   │       ├── common.ts         # Common constants
+│   │       ├── dreamina.ts       # Dreamina site constants
+│   │       └── exceptions.ts     # Exception constants
+│   ├── lib/                      # Core library
+│   │   ├── configs/              # Configuration loading
+│   │   │   ├── service-config.ts # Service configuration
+│   │   │   └── system-config.ts  # System configuration
+│   │   ├── consts/               # Constants
+│   │   ├── exceptions/           # Exception classes
+│   │   │   ├── Exception.ts      # Base exception
+│   │   │   └── APIException.ts   # API exception
+│   │   ├── request/              # Request handling
+│   │   │   └── Request.ts        # Request wrapper
+│   │   ├── response/             # Response handling
+│   │   │   ├── Response.ts       # Response wrapper
+│   │   │   ├── Body.ts           # Response body base
+│   │   │   ├── SuccessfulBody.ts # Success response body
+│   │   │   └── FailureBody.ts    # Failure response body
+│   │   ├── config.ts             # Configuration center
+│   │   ├── server.ts             # Server core
+│   │   ├── logger.ts             # Logger
+│   │   ├── error-handler.ts      # Unified error handling
+│   │   ├── smart-poller.ts       # Smart poller
+│   │   ├── aws-signature.ts      # AWS signature
+│   │   ├── environment.ts        # Environment variables
+│   │   ├── initialize.ts         # Initialization logic
+│   │   ├── http-status-codes.ts  # HTTP status code constants
+│   │   ├── image-uploader.ts     # Image upload utility
+│   │   ├── image-utils.ts        # Image processing utility
+│   │   ├── region-utils.ts       # Region handling utility
+│   │   └── util.ts               # Common utility functions
+│   └── index.ts                  # Entry file
+├── configs/                      # Configuration files
+├── Dockerfile                    # Docker configuration
+└── package.json                  # Project configuration
 ```
 
 ## 🔧 Core Components
