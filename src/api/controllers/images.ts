@@ -123,27 +123,29 @@ export async function generateImageComposition(
     logger.warn(`获取积分失败，可能是不支持的区域或token已失效: ${e.message}`);
   }
 
-  // 上传图片
-  const uploadedImageIds: string[] = [];
-  for (let i = 0; i < images.length; i++) {
-    try {
-      const image = images[i];
-      let imageId: string;
-      if (typeof image === 'string') {
-        logger.info(`正在处理第 ${i + 1}/${imageCount} 张图片 (URL)...`);
-        imageId = (await uploadImageFromUrl(image, refreshToken, regionInfo)).uri;
-      } else {
-        logger.info(`正在处理第 ${i + 1}/${imageCount} 张图片 (Buffer)...`);
-        imageId = (await uploadImageBuffer(image, refreshToken, regionInfo)).uri;
+  // 并发上传图片
+  logger.info(`开始并发上传 ${imageCount} 张图片...`);
+  const uploadedImageIds = await Promise.all(
+    images.map(async (image, i) => {
+      const index = i + 1;
+      try {
+        let imageId: string;
+        if (typeof image === 'string') {
+          logger.info(`正在并发处理第 ${index}/${imageCount} 张图片 (URL)...`);
+          imageId = (await uploadImageFromUrl(image, refreshToken, regionInfo)).uri;
+        } else {
+          logger.info(`正在并发处理第 ${index}/${imageCount} 张图片 (Buffer)...`);
+          imageId = (await uploadImageBuffer(image, refreshToken, regionInfo)).uri;
+        }
+        await checkImageContent(imageId, refreshToken, regionInfo);
+        logger.info(`图片 ${index}/${imageCount} 上传成功: ${imageId}`);
+        return imageId;
+      } catch (error) {
+        logger.error(`图片 ${index}/${imageCount} 上传失败: ${error.message}`);
+        throw new APIException(EX.API_IMAGE_GENERATION_FAILED, `图片 ${index} 上传失败: ${error.message}`);
       }
-      uploadedImageIds.push(imageId);
-      await checkImageContent(imageId, refreshToken, regionInfo);
-      logger.info(`图片 ${i + 1}/${imageCount} 上传成功: ${imageId}`);
-    } catch (error) {
-      logger.error(`图片 ${i + 1}/${imageCount} 上传失败: ${error.message}`);
-      throw new APIException(EX.API_IMAGE_GENERATION_FAILED, `图片上传失败: ${error.message}`);
-    }
-  }
+    })
+  );
 
   logger.info(`所有图片上传完成，开始图生图: ${uploadedImageIds.join(', ')}`);
 
