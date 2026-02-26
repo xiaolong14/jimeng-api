@@ -37,8 +37,19 @@ class Environment {
 
 }
 
+// 读取package.json，exe模式下可能不存在，使用默认值兜底
+let packageInfo: any = { name: 'jimeng-api', version: '1.0.0' };
+try {
+    const pkgPath = path.join(path.resolve(), "package.json");
+    if (fs.pathExistsSync(pkgPath)) {
+        packageInfo = JSON.parse(fs.readFileSync(pkgPath).toString());
+    }
+} catch (_) {
+    // 忽略读取失败，使用默认值
+}
+
 export default new Environment({
     cmdArgs,
     envVars,
-    package: JSON.parse(fs.readFileSync(path.join(path.resolve(), "package.json")).toString())
+    package: packageInfo
 });

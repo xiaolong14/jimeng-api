@@ -18,7 +18,8 @@
     "build": "tsup src/index.ts --format cjs,esm --sourcemap --dts --clean",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "build:exe": "tsup --config tsup.exe.config.ts && pkg dist-exe/index.cjs --target node18-win-x64 --output release/jimeng-api.exe --config package.json && node -e \"const fs=require('fs-extra');fs.copySync('configs','release/configs',{overwrite:true});console.log('configs copied to release/')\""
   },
   "author": "Jimeng API Team",
   "license": "GPL-3.0",
@@ -65,7 +66,17 @@
   "devDependencies": {
     "@types/lodash": "^4.14.202",
     "@types/mime": "^3.0.4",
+    "@yao-pkg/pkg": "^5.16.1",
     "tsup": "^8.0.2",
     "typescript": "^5.3.3"
+  },
+  "pkg": {
+    "targets": [
+      "node18-win-x64"
+    ],
+    "assets": [
+      "configs/**/*"
+    ],
+    "outputPath": "release"
   }
 }
